@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957990299525",
+    "project_id": "wewenunua-641ac",
+    "storage_bucket": "wewenunua-641ac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957990299525:android:79f069e117c784b01886ec",
+        "android_client_info": {
+          "package_name": "com.glory.wewenunua"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXhTEbk2hM2YD4chGT788dZ6bH3S_6wvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
