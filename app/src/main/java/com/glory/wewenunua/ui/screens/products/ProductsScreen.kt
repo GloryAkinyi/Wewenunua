@@ -218,7 +218,7 @@ fun ProductCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { navController.navigate(ROUT_UPDATE_PRODUCT)
+                IconButton(onClick = { navController.navigate("update_product/${product.id}")
                 }) {
                     Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color(0xFFFFC107))
                 }
