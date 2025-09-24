@@ -1,5 +1,6 @@
 package com.glory.wewenunua.ui.screens.products
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -228,8 +230,15 @@ fun ProductCard(
             }
 
             // Message Seller Button
+            val context = LocalContext.current
             Button(
-                onClick = { /* TODO: Implement messaging feature */ },
+                onClick = {
+
+                    val smsIntent = Intent(Intent.ACTION_SENDTO)
+                    smsIntent.data = "smsto:${product.phoneNumber}".toUri()
+                    smsIntent.putExtra("sms_body", "Hello Seller,...?")
+                    context.startActivity(smsIntent)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp),

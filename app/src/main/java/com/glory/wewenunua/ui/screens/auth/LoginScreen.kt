@@ -127,7 +127,7 @@ fun LoginScreen(navController: NavController){
             Row {
                 Button(
                     onClick = {
-                        authViewModel.login(email, password)
+                         authViewModel.login(email, password)
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(newYellow),

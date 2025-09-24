@@ -1,11 +1,9 @@
 package com.glory.wewenunua.ui.screens.products
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,23 +15,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +37,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.glory.wewenunua.R
 import com.glory.wewenunua.data.ProductViewModel
-import com.glory.wewenunua.navigation.ROUT_VIEW_PRODUCTS
 import com.glory.wewenunua.ui.theme.newYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +47,7 @@ fun AddProductScreen(navController: NavController) {
     var price by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var stock by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") } // ✅ New field
 
     val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -75,7 +69,7 @@ fun AddProductScreen(navController: NavController) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Future options */ }) {
+                    IconButton(onClick = { }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "More options")
                     }
                 },
@@ -96,7 +90,7 @@ fun AddProductScreen(navController: NavController) {
                     onClick = { selectedIndex = 0 }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Favorites") },
+                    icon = { Icon(Icons.Default.Info, contentDescription = "View") },
                     label = { Text("View") },
                     selected = selectedIndex == 1,
                     onClick = { selectedIndex = 1 }
@@ -114,7 +108,6 @@ fun AddProductScreen(navController: NavController) {
         },
 
         content = { paddingValues ->
-
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -123,7 +116,6 @@ fun AddProductScreen(navController: NavController) {
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Image Upload Card
@@ -149,22 +141,19 @@ fun AddProductScreen(navController: NavController) {
 
                 Text(
                     text = "Choose an image to upload",
-                    color = Color.Gray,
+                    color = androidx.compose.ui.graphics.Color.Gray,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
                 )
 
-                // Input Fields in a Card
+                // Input Fields
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.White)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-
-
 
                         OutlinedTextField(
                             value = name,
@@ -175,11 +164,10 @@ fun AddProductScreen(navController: NavController) {
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp),
-                            leadingIcon = {Icon(painter = painterResource(id=R.drawable.name), contentDescription = "")}
+                            leadingIcon = { Icon(painter = painterResource(id = R.drawable.name), contentDescription = "") }
                         )
 
-
-                        //Category
+                        // Category dropdown
                         var expanded by remember { mutableStateOf(false) }
                         val options = listOf("Electronics", "Fashion", "Books", "Home", "Toys")
                         Box(
@@ -189,7 +177,7 @@ fun AddProductScreen(navController: NavController) {
                         ) {
                             OutlinedTextField(
                                 value = category,
-                                onValueChange = { /* ignore manual input */ },
+                                onValueChange = { },
                                 label = { Text("Category") },
                                 placeholder = { Text("Select category") },
                                 modifier = Modifier.fillMaxWidth(),
@@ -221,21 +209,17 @@ fun AddProductScreen(navController: NavController) {
                             }
                         }
 
-
-                        //Enf of category
-
                         OutlinedTextField(
                             value = price,
                             onValueChange = { price = it },
                             label = { Text("Price") },
                             placeholder = { Text("e.g., 1200") },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp),
-                            shape =RoundedCornerShape(12.dp),
-                            leadingIcon = {Icon(painter = painterResource(id=R.drawable.price), contentDescription = "")}
-
+                            shape = RoundedCornerShape(12.dp),
+                            leadingIcon = { Icon(painter = painterResource(id = R.drawable.price), contentDescription = "") }
                         )
 
                         OutlinedTextField(
@@ -243,11 +227,25 @@ fun AddProductScreen(navController: NavController) {
                             onValueChange = { stock = it },
                             label = { Text("Stock Quantity") },
                             placeholder = { Text("e.g., 50") },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp)
+                        )
+
+                        // ✅ Phone Number field
+                        OutlinedTextField(
+                            value = phoneNumber,
+                            onValueChange = { phoneNumber = it },
+                            label = { Text("Phone Number") },
+                            placeholder = { Text("e.g., +254712345678") },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            leadingIcon = { Icon(painter = painterResource(id = R.drawable.phone), contentDescription = "") }
                         )
 
                         OutlinedTextField(
@@ -275,10 +273,10 @@ fun AddProductScreen(navController: NavController) {
                     Button(
                         onClick = { navController.popBackStack() },
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+                        colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.ui.graphics.Color.LightGray),
                         modifier = Modifier.width(140.dp)
                     ) {
-                        Text("Cancel", color = Color.DarkGray)
+                        Text("Cancel", color = androidx.compose.ui.graphics.Color.DarkGray)
                     }
 
                     Button(
@@ -290,15 +288,16 @@ fun AddProductScreen(navController: NavController) {
                                 price,
                                 description,
                                 stock,
+                                phoneNumber, // ✅ pass phone number
                                 context,
                                 navController
                             )
                         },
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0)),
+                        colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.ui.graphics.Color(0xFF1565C0)),
                         modifier = Modifier.width(140.dp)
                     ) {
-                        Text("Save", color = Color.White)
+                        Text("Save", color = androidx.compose.ui.graphics.Color.White)
                     }
                 }
 
@@ -308,10 +307,8 @@ fun AddProductScreen(navController: NavController) {
     )
 }
 
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddProductScreenPreview() {
     AddProductScreen(rememberNavController())
 }
-

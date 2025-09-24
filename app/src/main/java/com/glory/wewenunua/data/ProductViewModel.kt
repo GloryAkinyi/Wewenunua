@@ -34,6 +34,7 @@ class ProductViewModel : ViewModel() {
         price: String,
         description: String,
         stock: String,
+        phoneNumber: String,   // ✅ Added phone number
         context: Context,
         navController: NavController
     ) {
@@ -49,6 +50,7 @@ class ProductViewModel : ViewModel() {
                     "price" to price,
                     "description" to description,
                     "stock" to stock,
+                    "phoneNumber" to phoneNumber,   // ✅ Save phone number
                     "imageUrl" to imageUrl
                 )
 
@@ -132,6 +134,7 @@ class ProductViewModel : ViewModel() {
         price: String,
         description: String,
         stock: String,
+        phoneNumber: String,   // ✅ Added phone number
         context: Context,
         navController: NavController
     ) {
@@ -145,6 +148,7 @@ class ProductViewModel : ViewModel() {
                     "price" to price,
                     "description" to description,
                     "stock" to stock,
+                    "phoneNumber" to phoneNumber,   // ✅ Update phone number
                     "imageUrl" to imageUrl
                 )
 

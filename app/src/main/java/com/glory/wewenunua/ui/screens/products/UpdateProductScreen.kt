@@ -69,6 +69,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
     var price by remember { mutableStateOf(product!!.price ?: "") }
     var description by remember { mutableStateOf(product!!.description ?: "") }
     var stock by remember { mutableStateOf(product!!.stock ?: "") }
+    var phoneNumber by remember { mutableStateOf(product!!.phoneNumber ?: "") }
 
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
@@ -210,6 +211,18 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                         )
 
                         OutlinedTextField(
+                            value = phoneNumber,
+                            onValueChange = { phoneNumber = it },
+                            label = { Text("Phone Number") },
+                            placeholder = { Text("e.g., +254712345678") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+
+                        OutlinedTextField(
                             value = description,
                             onValueChange = { description = it },
                             label = { Text("Description") },
@@ -250,6 +263,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                                 price,
                                 description,
                                 stock,
+                                phoneNumber,
                                 context,
                                 navController
                             )
