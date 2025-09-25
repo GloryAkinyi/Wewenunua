@@ -124,7 +124,6 @@ fun LoginScreen(navController: NavController){
             val context = LocalContext.current
             val authViewModel = AuthViewModel(navController, context)
 
-            Row {
                 Button(
                     onClick = {
                          authViewModel.login(email, password)
@@ -138,19 +137,8 @@ fun LoginScreen(navController: NavController){
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Button(
-                    onClick = {
 
-                        authViewModel.adminlogin(email, password)
 
-                    },
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(newYellow),
-                ) {
-                    Text(text = "Login As Admin")
-                }
-
-            }
 
             Spacer(modifier = Modifier.height(10.dp))
 

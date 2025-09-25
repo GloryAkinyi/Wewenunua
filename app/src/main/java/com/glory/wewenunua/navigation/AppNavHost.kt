@@ -13,18 +13,22 @@ import com.glory.wewenunua.ui.screens.auth.RegisterScreen
 import com.glory.wewenunua.ui.screens.products.AddProductScreen
 import com.glory.wewenunua.ui.screens.products.ProductsScreen
 import com.glory.wewenunua.ui.screens.products.UpdateProductScreen
+import com.glory.wewenunua.ui.screens.task.AddTaskScreen
+import com.glory.wewenunua.ui.screens.task.ViewTaskScreen
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = ROUT_VIEW_PRODUCTS
+    startDestination: String = ADD_TASK
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
     ) {
+
+        //Product
         composable(ROUT_ADD_PRODUCT) {
             AddProductScreen(navController)
         }
@@ -38,12 +42,29 @@ fun AppNavHost(
             val productId = backStackEntry.arguments?.getString("productId")!!
             UpdateProductScreen(navController,productId)
         }
+
+        //End
+
+
+        //Auth
         composable(ROUT_REGISTER) {
             RegisterScreen(navController)
         }
         composable(ROUT_LOGIN) {
             LoginScreen(navController)
         }
+        //End
+
+
+        //Task
+
+        composable(ADD_TASK){
+            AddTaskScreen(navController = navController)
+        }
+        composable(VIEW_TASKS){
+            ViewTaskScreen(navController = navController)
+        }
+        //End
 
 
 

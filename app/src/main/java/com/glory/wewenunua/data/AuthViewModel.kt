@@ -71,27 +71,6 @@ class AuthViewModel(var navController: NavController, var context: Context){
         }
     }
 
-    fun adminlogin(email: String, password: String){
-
-        if (email.isBlank() || password.isBlank()){
-            Toast.makeText(context,"Please email and password cannot be blank", Toast.LENGTH_LONG).show()
-        }
-
-        else if (email == "admin@gmail.com" && password == "123456"){
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                if (it.isSuccessful ){
-                    Toast.makeText(this.context, "Success", Toast.LENGTH_SHORT).show()
-                    navController.navigate(ROUT_ADD_PRODUCT)
-                }else{
-                    Toast.makeText(this.context, "Error", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-        }
-        else{
-            navController.navigate(ROUT_LOGIN)
-        }
-    }
 
 
 
