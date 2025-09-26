@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,17 +29,17 @@ import coil.compose.AsyncImage
 import com.glory.wewenunua.data.ProductViewModel
 import com.glory.wewenunua.models.Product
 import com.glory.wewenunua.navigation.ROUT_ADD_PRODUCT
-import com.glory.wewenunua.navigation.ROUT_LOGIN
 import com.glory.wewenunua.navigation.ROUT_UPDATE_PRODUCT
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsScreen(navController: NavController) {
     val productViewModel: ProductViewModel = viewModel()
-    val products = productViewModel.products
+    val products = productViewModel.products // Live list of products from ViewModel
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
 
+    // READ: Fetch products from Firebase when screen opens
     LaunchedEffect(Unit) {
         productViewModel.fetchProducts(context)
     }
@@ -48,6 +47,7 @@ fun ProductsScreen(navController: NavController) {
     Scaffold(
         topBar = {
             Column {
+                // Top bar with app title and menu
                 TopAppBar(
                     title = { Text("Products") },
                     actions = {
@@ -62,7 +62,7 @@ fun ProductsScreen(navController: NavController) {
                     )
                 )
 
-                // Search Bar
+                //  Search Bar for filtering products
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -79,21 +79,25 @@ fun ProductsScreen(navController: NavController) {
             }
         },
         bottomBar = {
+            //  CREATE: Navigate to Add Product screen
             NavigationBar(containerColor = Color(0xFFFFC107)) {
-
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(ROUT_ADD_PRODUCT) },
+                    onClick = { navController.navigate(ROUT_ADD_PRODUCT) }, // ✅ CREATE
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     label = { Text("Add") }
                 )
             }
         }
     ) { paddingValues ->
+
+
+        //  Filtered products based on search query
         val filteredProducts = products.filter { product ->
             product.name?.contains(searchQuery, ignoreCase = true) == true
         }
 
+        // READ: Display products in grid
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier
@@ -107,6 +111,7 @@ fun ProductsScreen(navController: NavController) {
             items(filteredProducts) { product ->
                 ProductCard(
                     product = product,
+                    //  DELETE: Calls ViewModel to remove product
                     onDelete = { productId -> productViewModel.deleteProduct(productId, context) },
                     navController = navController
                 )
@@ -114,6 +119,7 @@ fun ProductsScreen(navController: NavController) {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductCard(
@@ -123,6 +129,7 @@ fun ProductCard(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    //  Confirmation dialog for DELETE
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -136,31 +143,21 @@ fun ProductCard(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Delete Product?",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Text("Delete Product?", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Are you sure you want to delete ${product.name}?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Text("Are you sure you want to delete ${product.name}?")
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    OutlinedButton(
-                        onClick = { showBottomSheet = false }
-                    ) {
+                    OutlinedButton(onClick = { showBottomSheet = false }) {
                         Text("Cancel")
                     }
                     Button(
                         onClick = {
                             showBottomSheet = false
-                            product.id?.let { onDelete(it) }
+                            product.id?.let { onDelete(it) } //  DELETE
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                     ) {
@@ -172,7 +169,7 @@ fun ProductCard(
         }
     }
 
-    // --- Existing Card UI ---
+    // Card showing product details
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,7 +183,7 @@ fun ProductCard(
             modifier = Modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Product Image
+            //  Product Image
             product.imageUrl?.let { imageUrl ->
                 AsyncImage(
                     model = imageUrl,
@@ -201,39 +198,33 @@ fun ProductCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Product name & price
-            Text(
-                text = product.name ?: "No Name",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = "Price: Ksh${product.price ?: "N/A"}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            //  Product name & price
+            Text(product.name ?: "No Name", style = MaterialTheme.typography.titleMedium)
+            Text("Price: Ksh${product.price ?: "N/A"}", style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Action icons (edit & delete)
+            // UPDATE & DELETE icons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { navController.navigate("update_product/${product.id}")
+                //  UPDATE: Navigate to Update screen
+                IconButton(onClick = {
+                    navController.navigate("update_product/${product.id}") //  UPDATE
                 }) {
                     Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color(0xFFFFC107))
                 }
+                //  DELETE: Open delete confirmation sheet
                 IconButton(onClick = { showBottomSheet = true }) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
                 }
             }
 
-            // Message Seller Button
+            //  Extra feature: Message seller via SMS
             val context = LocalContext.current
             Button(
                 onClick = {
-
                     val smsIntent = Intent(Intent.ACTION_SENDTO)
                     smsIntent.data = "smsto:${product.phoneNumber}".toUri()
                     smsIntent.putExtra("sms_body", "Hello Seller,...?")

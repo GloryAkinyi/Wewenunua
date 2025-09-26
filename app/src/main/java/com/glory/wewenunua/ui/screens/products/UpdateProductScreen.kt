@@ -44,18 +44,21 @@ import kotlinx.coroutines.tasks.await
 @Composable
 fun UpdateProductScreen(navController: NavController, productId: String) {
     val productViewModel: ProductViewModel = viewModel()
+
+    // Product state from Firebase
     var product by remember { mutableStateOf<Product?>(null) }
 
-    // ✅ Fetch product from Firebase
+    // Fetch a single product from Firebase by its ID (READ operation)
     LaunchedEffect(productId) {
         val ref = FirebaseDatabase.getInstance()
-            .getReference("Products").child(productId)
-        val snapshot = ref.get().await()
+            .getReference("Products").child(productId) // navigate into product node
+        val snapshot = ref.get().await() // suspend until data is fetched
         product = snapshot.getValue(Product::class.java)?.apply {
-            id = productId
+            id = productId // restore the product ID
         }
     }
 
+    // Show loader while waiting for Firebase response
     if (product == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = newYellow)
@@ -63,7 +66,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
         return
     }
 
-    // ✅ State variables
+    // State variables pre-filled with existing product data
     var name by remember { mutableStateOf(product!!.name ?: "") }
     var category by remember { mutableStateOf(product!!.category ?: "") }
     var price by remember { mutableStateOf(product!!.price ?: "") }
@@ -71,6 +74,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
     var stock by remember { mutableStateOf(product!!.stock ?: "") }
     var phoneNumber by remember { mutableStateOf(product!!.phoneNumber ?: "") }
 
+    // 🔹 Handle image picking (only replaces image if user selects a new one)
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         it?.let { uri -> imageUri.value = uri }
@@ -79,6 +83,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
     val context = LocalContext.current
 
     Scaffold(
+        // 🔹 Top AppBar
         topBar = {
             TopAppBar(
                 title = { Text("Update Product", color = Color.White) },
@@ -98,25 +103,27 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                 )
             )
         },
+
+        // 🔹 Bottom navigation
         bottomBar = {
             NavigationBar(containerColor = newYellow) {
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(ROUT_VIEW_PRODUCTS) },
+                    onClick = { navController.navigate(ROUT_VIEW_PRODUCTS) }, // Go back to product list
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                     label = { Text("Home") }
                 )
 
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(ROUT_ADD_PRODUCT) },
+                    onClick = { navController.navigate(ROUT_ADD_PRODUCT) }, // Add a new product
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     label = { Text("Add") }
                 )
-
-
             }
         },
+
+        // 🔹 Main Content
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -128,11 +135,11 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ✅ Image Upload
+                // Product Image (shows existing image or new one if selected)
                 Card(
                     modifier = Modifier
                         .size(160.dp)
-                        .clickable { launcher.launch("image/*") },
+                        .clickable { launcher.launch("image/*") }, // pick new image
                     shape = CircleShape,
                     elevation = CardDefaults.cardElevation(10.dp)
                 ) {
@@ -141,7 +148,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                         label = "Image Picker Animation"
                     ) {
                         AsyncImage(
-                            model = imageUri.value ?: product!!.imageUrl,
+                            model = imageUri.value ?: product!!.imageUrl, // show new or old
                             contentDescription = "Product Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
@@ -156,7 +163,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                     modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
                 )
 
-                // ✅ Input Fields
+                //Input Fields for updating product info
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -169,9 +176,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                             onValueChange = { name = it },
                             label = { Text("Product Name") },
                             placeholder = { Text("e.g., Samsung Galaxy S22") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp)
                         )
 
@@ -180,9 +185,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                             onValueChange = { category = it },
                             label = { Text("Category") },
                             placeholder = { Text("e.g., Electronics") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp)
                         )
 
@@ -192,9 +195,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                             label = { Text("Price") },
                             placeholder = { Text("e.g., 1200") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp)
                         )
 
@@ -204,9 +205,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                             label = { Text("Stock Quantity") },
                             placeholder = { Text("e.g., 50") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp)
                         )
 
@@ -216,9 +215,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                             label = { Text("Phone Number") },
                             placeholder = { Text("e.g., +254712345678") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                             shape = RoundedCornerShape(12.dp)
                         )
 
@@ -227,10 +224,7 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                             onValueChange = { description = it },
                             label = { Text("Description") },
                             placeholder = { Text("Brief product description") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                                .height(100.dp),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).height(100.dp),
                             shape = RoundedCornerShape(12.dp),
                             maxLines = 4
                         )
@@ -239,11 +233,12 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // ✅ Buttons
+                //Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    // Cancel button → just go back
                     Button(
                         onClick = { navController.popBackStack() },
                         shape = RoundedCornerShape(12.dp),
@@ -253,11 +248,12 @@ fun UpdateProductScreen(navController: NavController, productId: String) {
                         Text("Cancel", color = Color.DarkGray)
                     }
 
+                    // Update button → calls ViewModel (UPDATE operation)
                     Button(
                         onClick = {
                             productViewModel.updateProduct(
                                 productId,
-                                imageUri.value,
+                                imageUri.value, // only new image if picked
                                 name,
                                 category,
                                 price,
